@@ -1,0 +1,286 @@
+[
+ {
+  "num": 1,
+  "rama": "feature/db-esquema",
+  "titulo": "Esquema de base de datos y datos semilla",
+  "wis": [
+   15
+  ],
+  "semana": 1,
+  "autor": "d1",
+  "cerrar": [
+   15
+  ],
+  "tag": null
+ },
+ {
+  "num": 2,
+  "rama": "feature/api-incidentes",
+  "titulo": "API REST de incidentes: crear, consultar y filtrar",
+  "wis": [
+   16,
+   18
+  ],
+  "semana": 1,
+  "autor": "d1",
+  "cerrar": [
+   16,
+   18
+  ],
+  "tag": null
+ },
+ {
+  "num": 3,
+  "rama": "feature/api-comentarios",
+  "titulo": "API de comentarios y bitácora",
+  "wis": [
+   21
+  ],
+  "semana": 1,
+  "autor": "d2",
+  "cerrar": [
+   21
+  ],
+  "tag": null
+ },
+ {
+  "num": 4,
+  "rama": "feature/api-estados-asignacion",
+  "titulo": "Asignación de técnico y transiciones de estado",
+  "wis": [
+   20
+  ],
+  "semana": 1,
+  "autor": "d3",
+  "cerrar": [
+   20
+  ],
+  "tag": null
+ },
+ {
+  "num": 5,
+  "rama": "feature/api-dashboard",
+  "titulo": "Endpoint de indicadores del dashboard",
+  "wis": [
+   23
+  ],
+  "semana": 1,
+  "autor": "d1",
+  "cerrar": [],
+  "tag": null
+ },
+ {
+  "num": 6,
+  "rama": "feature/frontend-incidentes",
+  "titulo": "Frontend: formulario, listado y filtros",
+  "wis": [
+   17,
+   19
+  ],
+  "semana": 1,
+  "autor": "d2",
+  "cerrar": [
+   17,
+   19,
+   7
+  ],
+  "tag": null
+ },
+ {
+  "num": 7,
+  "rama": "feature/frontend-detalle-bitacora",
+  "titulo": "Frontend: detalle, asignación, estados y bitácora; Docker",
+  "wis": [
+   22
+  ],
+  "semana": 1,
+  "autor": "d3",
+  "cerrar": [
+   22,
+   10
+  ],
+  "tag": "v0.1.0"
+ },
+ {
+  "num": 8,
+  "rama": "chore/pipeline-azure-ci",
+  "titulo": "Pipeline de Azure: build, pruebas, seguridad y artefacto",
+  "wis": [
+   24
+  ],
+  "semana": 2,
+  "autor": "d3",
+  "cerrar": [
+   24
+  ],
+  "tag": null,
+  "crear_pipeline": true
+ },
+ {
+  "num": 9,
+  "rama": "docs/agente-autohospedado",
+  "titulo": "Guía y script del agente autohospedado",
+  "wis": [
+   25
+  ],
+  "semana": 2,
+  "autor": "d3",
+  "cerrar": [
+   25
+  ],
+  "tag": null
+ },
+ {
+  "num": 10,
+  "rama": "chore/github-actions-ci",
+  "titulo": "Workflow de GitHub Actions para PR",
+  "wis": [
+   26
+  ],
+  "semana": 2,
+  "autor": "d2",
+  "cerrar": [
+   26,
+   12
+  ],
+  "tag": null
+ },
+ {
+  "num": 11,
+  "rama": "chore/gestion-secretos",
+  "titulo": "Gestión de secretos con variable group",
+  "wis": [
+   27
+  ],
+  "semana": 2,
+  "autor": "d3",
+  "cerrar": [
+   27
+  ],
+  "tag": "v0.2.0",
+  "crear_grupo_secretos": true
+ },
+ {
+  "num": 12,
+  "rama": "docs/analisis-dependencias",
+  "titulo": "Análisis de dependencias y decisiones",
+  "wis": [
+   28
+  ],
+  "semana": 2,
+  "autor": "d1",
+  "cerrar": [
+   28,
+   13,
+   5
+  ],
+  "tag": null
+ },
+ {
+  "num": 13,
+  "rama": "fix/estado-cerrado-terminal",
+  "titulo": "Corregir transición de CERRADO (fallo controlado de pipeline)",
+  "wis": [
+   33
+  ],
+  "semana": 2,
+  "autor": "d2",
+  "cerrar": [
+   33,
+   9
+  ],
+  "tag": null,
+  "roto_primero": true
+ },
+ {
+  "num": 14,
+  "rama": "refactor/manejo-errores-central",
+  "titulo": "Deuda técnica: manejo centralizado de errores",
+  "wis": [
+   31
+  ],
+  "semana": 2,
+  "autor": "d1",
+  "cerrar": [
+   31
+  ],
+  "tag": null
+ },
+ {
+  "num": 15,
+  "rama": "refactor/paginacion-incidentes",
+  "titulo": "Deuda técnica: paginación del listado",
+  "wis": [
+   32
+  ],
+  "semana": 2,
+  "autor": "d2",
+  "cerrar": [
+   32,
+   8,
+   3
+  ],
+  "tag": "v0.3.0"
+ },
+ {
+  "num": 16,
+  "rama": "feature/frontend-dashboard",
+  "titulo": "Frontend: dashboard de indicadores",
+  "wis": [
+   23
+  ],
+  "semana": 3,
+  "autor": "d2",
+  "cerrar": [
+   23,
+   11,
+   4,
+   1
+  ],
+  "tag": "v0.4.0"
+ },
+ {
+  "num": 17,
+  "rama": "chore/release-ambientes",
+  "titulo": "Pipeline de release Dev/QA/Producción con aprobaciones",
+  "wis": [
+   29
+  ],
+  "semana": 3,
+  "autor": "d3",
+  "cerrar": [
+   29
+  ],
+  "tag": "v0.9.0"
+ },
+ {
+  "num": 18,
+  "rama": "chore/versionado-semver",
+  "titulo": "Versionado SemVer y CHANGELOG",
+  "wis": [
+   30
+  ],
+  "semana": 3,
+  "autor": "d1",
+  "cerrar": [
+   30,
+   14,
+   6,
+   2
+  ],
+  "tag": "v1.0.0-rc.1"
+ },
+ {
+  "num": 19,
+  "rama": "docs/documentacion-final",
+  "titulo": "Documentación final y guion de demostración",
+  "wis": [
+   29,
+   30
+  ],
+  "semana": 3,
+  "autor": "d1",
+  "cerrar": [],
+  "tag": "v1.0.0"
+ }
+]

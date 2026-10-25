@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+.env
+*.log
+junit.xml
+_agente/
+__pycache__/
