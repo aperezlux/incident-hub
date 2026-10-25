@@ -6,7 +6,7 @@ const TRANSICIONES = {
   ASIGNADO: ['EN_PROCESO'],
   EN_PROCESO: ['RESUELTO'],
   RESUELTO: ['CERRADO', 'EN_PROCESO'],
-  CERRADO: ['EN_PROCESO']
+  CERRADO: []
 };
 
 function validarIncidente(d = {}) {
