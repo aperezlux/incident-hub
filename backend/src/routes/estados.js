@@ -1,50 +1,35 @@
 const { ESTADOS, transicionValida } = require('../dominio');
+const { ErrorHttp, asyncHandler, idValido } = require('../errores');
 
 module.exports = (app) => {
   const repo = () => app.locals.repo;
 
-  async function cargar(req, res) {
-    const id = Number(req.params.id);
-    if (!Number.isInteger(id)) { res.status(400).json({ error: 'id inválido' }); return null; }
-    const i = await repo().obtener(id);
-    if (!i) { res.status(404).json({ error: 'No encontrado' }); return null; }
+  async function cargar(req) {
+    const i = await repo().obtener(idValido(req.params.id));
+    if (!i) throw new ErrorHttp(404, 'No encontrado');
     return i;
   }
 
-  app.patch('/api/incidentes/:id/asignar', async (req, res) => {
-    try {
-      const i = await cargar(req, res);
-      if (!i) return undefined;
-      const tecnico = (req.body && req.body.tecnico || '').trim();
-      if (!tecnico) return res.status(400).json({ errores: ['tecnico: requerido'] });
-      if (!['NUEVO', 'ASIGNADO'].includes(i.estado)) {
-        return res.status(409).json({ error: `No se puede asignar un incidente en estado ${i.estado}` });
-      }
-      const act = await repo().actualizar(i.id, { tecnico, estado: 'ASIGNADO' });
-      await repo().agregarComentario(i.id, 'sistema', `Asignado a ${tecnico}`);
-      return res.json(act);
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Error interno' });
+  app.patch('/api/incidentes/:id/asignar', asyncHandler(async (req, res) => {
+    const i = await cargar(req);
+    const tecnico = ((req.body && req.body.tecnico) || '').trim();
+    if (!tecnico) throw new ErrorHttp(400, { errores: ['tecnico: requerido'] });
+    if (!['NUEVO', 'ASIGNADO'].includes(i.estado)) {
+      throw new ErrorHttp(409, `No se puede asignar un incidente en estado ${i.estado}`);
     }
-  });
+    const act = await repo().actualizar(i.id, { tecnico, estado: 'ASIGNADO' });
+    await repo().agregarComentario(i.id, 'sistema', `Asignado a ${tecnico}`);
+    res.json(act);
+  }));
 
-  app.patch('/api/incidentes/:id/estado', async (req, res) => {
-    try {
-      const i = await cargar(req, res);
-      if (!i) return undefined;
-      const nuevo = req.body && req.body.estado;
-      if (!ESTADOS.includes(nuevo)) return res.status(400).json({ errores: ['estado inválido'] });
-      if (nuevo === 'ASIGNADO') return res.status(409).json({ error: 'Use /asignar para asignar un técnico' });
-      if (!transicionValida(i.estado, nuevo)) {
-        return res.status(409).json({ error: `Transición no permitida: ${i.estado} → ${nuevo}` });
-      }
-      const act = await repo().actualizar(i.id, { estado: nuevo });
-      await repo().agregarComentario(i.id, 'sistema', `Estado: ${i.estado} → ${nuevo}`);
-      return res.json(act);
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Error interno' });
-    }
-  });
+  app.patch('/api/incidentes/:id/estado', asyncHandler(async (req, res) => {
+    const i = await cargar(req);
+    const nuevo = req.body && req.body.estado;
+    if (!ESTADOS.includes(nuevo)) throw new ErrorHttp(400, { errores: ['estado inválido'] });
+    if (nuevo === 'ASIGNADO') throw new ErrorHttp(409, 'Use /asignar para asignar un técnico');
+    if (!transicionValida(i.estado, nuevo)) throw new ErrorHttp(409, `Transición no permitida: ${i.estado} → ${nuevo}`);
+    const act = await repo().actualizar(i.id, { estado: nuevo });
+    await repo().agregarComentario(i.id, 'sistema', `Estado: ${i.estado} → ${nuevo}`);
+    res.json(act);
+  }));
 };
