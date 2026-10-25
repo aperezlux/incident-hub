@@ -9,14 +9,17 @@ function crearRepo(pool) {
       );
       return r.rows[0];
     },
-    async listar(f = {}) {
+    async listar(f = {}, p = {}) {
       const c = [];
       const v = [];
       for (const k of FILTROS) {
         if (f[k]) { v.push(f[k]); c.push(`${k} = $${v.length}`); }
       }
       const w = c.length ? 'WHERE ' + c.join(' AND ') : '';
-      const r = await pool.query(`SELECT * FROM incidentes ${w} ORDER BY creado_en DESC, id DESC`, v);
+      v.push(p.limite || 50, p.desplazamiento || 0);
+      const r = await pool.query(
+        `SELECT * FROM incidentes ${w} ORDER BY creado_en DESC, id DESC LIMIT $${v.length - 1} OFFSET $${v.length}`, v
+      );
       return r.rows;
     },
     async obtener(id) {

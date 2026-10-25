@@ -12,11 +12,13 @@ function crearMemoria() {
       inc.push(i);
       return { ...i };
     },
-    async listar(f = {}) {
+    async listar(f = {}, p = {}) {
+      const desde = p.desplazamiento || 0;
       return inc
         .filter((i) => ['estado', 'prioridad', 'categoria', 'tecnico'].every((k) => !f[k] || i[k] === f[k]))
         .map((i) => ({ ...i }))
-        .reverse();
+        .reverse()
+        .slice(desde, desde + (p.limite || 50));
     },
     async obtener(id) {
       const i = inc.find((x) => x.id === id);
