@@ -1,0 +1,24 @@
+# Uso: cp .env.example .env (defina DB_PASSWORD) y luego: docker compose up -d
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-incident}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD en .env}
+      POSTGRES_DB: ${DB_NAME:-incident_hub}
+    ports: ["5432:5432"]
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d:ro
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_USER: ${DB_USER:-incident}
+      DB_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD en .env}
+      DB_NAME: ${DB_NAME:-incident_hub}
+    ports: ["3000:3000"]
+    depends_on: [db]
+  frontend:
+    build: ./frontend
+    ports: ["8080:80"]
+    depends_on: [backend]
