@@ -11,7 +11,9 @@ module.exports = (app) => {
   }));
 
   app.get('/api/incidentes', asyncHandler(async (req, res) => {
-    res.json(await repo().listar(req.query));
+    const limite = Math.min(Math.max(parseInt(req.query.limite, 10) || 50, 1), 200);
+    const pagina = Math.max(parseInt(req.query.pagina, 10) || 1, 1);
+    res.json(await repo().listar(req.query, { limite, desplazamiento: (pagina - 1) * limite }));
   }));
 
   app.get('/api/incidentes/:id', asyncHandler(async (req, res) => {
