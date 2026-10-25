@@ -1,0 +1,93 @@
+# Pipeline de CI de IT Incident Hub
+trigger:
+  branches:
+    include: [main]
+pr:
+  branches:
+    include: [main]
+
+parameters:
+  - name: agentPool
+    displayName: Pool de agentes (autohospedado)
+    type: string
+    default: Default
+
+variables:
+  NODE_VERSION: '20.x'
+
+stages:
+  - stage: CI
+    displayName: Integración continua
+    pool:
+      name: ${{ parameters.agentPool }}
+    jobs:
+      - job: build_test
+        displayName: Build, pruebas y seguridad
+        steps:
+          - checkout: self
+            displayName: Checkout del repositorio
+
+          - task: NodeTool@0
+            displayName: Instalar Node.js
+            inputs:
+              versionSpec: $(NODE_VERSION)
+
+          - script: npm install --no-audit --no-fund
+            workingDirectory: backend
+            displayName: Instalar dependencias (backend)
+
+          - script: npm install --no-audit --no-fund
+            workingDirectory: frontend
+            displayName: Instalar dependencias (frontend)
+
+          - script: npm run lint
+            workingDirectory: backend
+            displayName: Lint backend
+
+          - script: npm run lint
+            workingDirectory: frontend
+            displayName: Lint frontend
+
+          - script: npm test
+            workingDirectory: backend
+            displayName: Pruebas backend (con cobertura)
+
+          - script: npm test
+            workingDirectory: frontend
+            displayName: Pruebas frontend
+
+          - task: PublishTestResults@2
+            displayName: Publicar resultados de pruebas
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: JUnit
+              testResultsFiles: '**/junit.xml'
+              searchFolder: $(System.DefaultWorkingDirectory)/backend
+              testRunTitle: Backend
+
+          - task: PublishCodeCoverageResults@2
+            displayName: Publicar cobertura
+            condition: succeededOrFailed()
+            inputs:
+              summaryFileLocation: $(System.DefaultWorkingDirectory)/backend/coverage/cobertura-coverage.xml
+
+          - script: npm run build
+            workingDirectory: frontend
+            displayName: Build frontend
+
+          - script: npm audit --omit=dev --audit-level=critical
+            workingDirectory: backend
+            displayName: Revisión de dependencias (backend, falla en críticas)
+
+          - script: npm audit --omit=dev --audit-level=critical
+            workingDirectory: frontend
+            displayName: Revisión de dependencias (frontend, falla en críticas)
+
+          - script: node devops/scripts/empaquetar.js $(Build.ArtifactStagingDirectory)/incident-hub
+            displayName: Empaquetar artefacto
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publicar artefacto
+            inputs:
+              PathtoPublish: $(Build.ArtifactStagingDirectory)/incident-hub
+              ArtifactName: incident-hub
