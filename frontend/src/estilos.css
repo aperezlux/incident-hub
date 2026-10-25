@@ -1,0 +1,22 @@
+:root { --azul: #1f4e8c; --borde: #d0d7e2; --fondo: #f5f7fb; font-family: system-ui, sans-serif; }
+body { margin: 0; background: var(--fondo); color: #1c2430; }
+header { background: var(--azul); color: #fff; padding: 12px 24px; display: flex; gap: 24px; align-items: center; }
+header h1 { font-size: 1.1rem; margin: 0; }
+nav button { background: transparent; color: #fff; border: 0; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
+nav button.activo { background: rgba(255,255,255,.2); }
+main { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+.tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.filtros, .fila { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+label { display: flex; flex-direction: column; font-size: .85rem; gap: 4px; flex: 1; min-width: 140px; }
+input, select, textarea, button { font: inherit; padding: 6px 8px; border: 1px solid var(--borde); border-radius: 4px; }
+button.primario { background: var(--azul); color: #fff; border: 0; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--borde); font-size: .9rem; }
+tr.clic { cursor: pointer; } tr.clic:hover { background: #eef3fb; }
+.etiqueta { padding: 2px 8px; border-radius: 10px; background: #e3e9f4; font-size: .75rem; }
+.etiqueta.CRITICA { background: #f8d0d0; } .etiqueta.ALTA { background: #fde5c8; }
+.error { color: #b00020; } .ok { color: #1b7a3a; }
+.bitacora li { margin-bottom: 8px; } .bitacora small { color: #667; }
+.barra { background: var(--azul); height: 14px; border-radius: 3px; min-width: 2px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.kpi { text-align: center; } .kpi strong { display: block; font-size: 2rem; }
