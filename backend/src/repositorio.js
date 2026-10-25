@@ -23,6 +23,17 @@ function crearRepo(pool) {
       const r = await pool.query('SELECT * FROM incidentes WHERE id = $1', [id]);
       return r.rows[0] || null;
     },
+    async agregarComentario(incidenteId, autor, texto) {
+      const r = await pool.query(
+        'INSERT INTO comentarios (incidente_id, autor, texto) VALUES ($1,$2,$3) RETURNING *',
+        [incidenteId, autor, texto]
+      );
+      return r.rows[0];
+    },
+    async listarComentarios(incidenteId) {
+      const r = await pool.query('SELECT * FROM comentarios WHERE incidente_id = $1 ORDER BY creado_en ASC, id ASC', [incidenteId]);
+      return r.rows;
+    },
     // MAS_METODOS
   };
 }
