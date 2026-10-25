@@ -36,6 +36,20 @@ function crearMemoria() {
       Object.assign(i, campos, { actualizado_en: new Date().toISOString() });
       return { ...i };
     },
+    async dashboard() {
+      const cuenta = (clave) => Object.entries(inc.reduce((a, i) => {
+        const k = i[clave] || 'SIN ASIGNAR';
+        a[k] = (a[k] || 0) + 1;
+        return a;
+      }, {})).sort(([a], [b]) => a.localeCompare(b)).map(([nombre, total]) => ({ nombre, total }));
+      return {
+        abiertos: inc.filter((i) => i.estado !== 'CERRADO').length,
+        cerrados: inc.filter((i) => i.estado === 'CERRADO').length,
+        criticos: inc.filter((i) => i.prioridad === 'CRITICA' && i.estado !== 'CERRADO').length,
+        por_categoria: cuenta('categoria'),
+        por_tecnico: cuenta('tecnico')
+      };
+    },
     // MAS_METODOS
   };
 }

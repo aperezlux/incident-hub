@@ -46,6 +46,17 @@ function crearRepo(pool) {
       );
       return r.rows[0] || null;
     },
+    async dashboard() {
+      const t = await pool.query(
+        `SELECT COUNT(*) FILTER (WHERE estado <> 'CERRADO')::int AS abiertos,
+                COUNT(*) FILTER (WHERE estado = 'CERRADO')::int AS cerrados,
+                COUNT(*) FILTER (WHERE prioridad = 'CRITICA' AND estado <> 'CERRADO')::int AS criticos
+           FROM incidentes`
+      );
+      const cat = await pool.query('SELECT categoria AS nombre, COUNT(*)::int AS total FROM incidentes GROUP BY categoria ORDER BY categoria');
+      const tec = await pool.query("SELECT COALESCE(tecnico, 'SIN ASIGNAR') AS nombre, COUNT(*)::int AS total FROM incidentes GROUP BY 1 ORDER BY 1");
+      return { ...t.rows[0], por_categoria: cat.rows, por_tecnico: tec.rows };
+    },
     // MAS_METODOS
   };
 }
