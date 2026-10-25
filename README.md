@@ -1,24 +1,39 @@
 # IT Incident Hub
 
-Aplicación web para registrar, asignar y dar seguimiento a incidentes de TI, construida como **proyecto integrador DevOps** (Azure Boards → Git → PR → CI → calidad → artefacto → versión → release).
+Aplicación web para registrar, asignar y dar seguimiento a incidentes de TI, construida como **proyecto integrador DevOps** (Azure Boards → Git → PR → CI → calidad → artefacto → versión → release). Versión actual: **1.0.0**.
 
 ## Stack
 React (Vite) · Node.js + Express · PostgreSQL · Jest/Supertest · Vitest · ESLint · Docker · Azure Pipelines · GitHub Actions
 
 ## Requisitos
-Node.js 20+, npm, Docker (para PostgreSQL), Git. Para publicar en Azure: Azure CLI + extensión `azure-devops`, Python 3.
+Node.js 20+, npm, Docker, Git. Para publicar en Azure: Azure CLI + extensión `azure-devops` y Python 3.
 
-## Instalación y ejecución local
+## Instalación y ejecución
 ```bash
-cp .env.example .env            # defina DB_PASSWORD
-docker compose up -d db         # PostgreSQL con esquema y semillas (database/)
-cd backend && npm install && npm start      # API en :3000
-cd frontend && npm install && npm run dev   # UI en :5173
+cp .env.example .env                    # defina DB_PASSWORD (no se versiona)
+docker compose up -d --build            # db + api (:3000) + ui (:8080)
+tests/smoke.sh http://localhost:3000    # verificación rápida
 ```
-Pruebas: `npm test` en `backend/` y `frontend/`. Smoke test: `tests/smoke.sh`.
+Desarrollo sin Docker: `docker compose up -d db`, luego `cd backend && npm install && npm start` y `cd frontend && npm install && npm run dev` (UI en :5173).
+Pruebas y lint: `npm test` / `npm run lint` en `backend/` y `frontend/`.
+
+## API
+`POST/GET /api/incidentes` (filtros `estado, prioridad, categoria, tecnico`; paginación `limite, pagina`) · `GET /api/incidentes/:id` · `PATCH /:id/asignar` · `PATCH /:id/estado` · `GET/POST /:id/comentarios` · `GET /api/dashboard` · `GET /health`.
 
 ## Estructura
-`backend/` API · `frontend/` UI · `database/` SQL · `tests/` smoke/e2e · `devops/` scripts y backlog · `docs/` documentación · `.github/workflows/` GitHub Actions · `azure-pipelines.yml`
+`backend/` API · `frontend/` UI · `database/` SQL · `tests/` smoke · `devops/` scripts, backlog y PRs · `docs/` documentación · `.github/workflows/` GitHub Actions · `azure-pipelines.yml`.
+
+## Documentación (`docs/`)
+arquitectura · branching · deuda-tecnica · seguridad · dependencias · estrategia-release · backlog · trazabilidad · pipeline-fallido · guion-demo · checklist-entrega · pull-requests/
+
+## Publicación en Azure DevOps
+```bash
+export AZ_ORG=https://dev.azure.com/SU_ORG AZURE_DEVOPS_EXT_PAT=...   # PAT solo en su terminal
+python3 devops/scripts/crear_backlog.py       # proyecto, repos y 33 work items (AB#1..33)
+python3 devops/scripts/publicar.py 1          # semana 1: ramas, PR, aprobación, merge, tags
+python3 devops/scripts/publicar.py 2          # requiere agente autohospedado (devops/self-hosted-agent.md)
+python3 devops/scripts/publicar.py 3
+```
 
 ## Responsables (proyecto individual, identidades simuladas)
 | Rol | Usuario |
@@ -27,6 +42,3 @@ Pruebas: `npm test` en `backend/` y `frontend/`. Smoke test: `tests/smoke.sh`.
 | Frontend / QA | Dev Dos |
 | DevOps / release | Dev Tres |
 | Revisión de PR | Revisor Calidad |
-
-## Entregas
-Tres repos parciales (`incident-hub-semana1..3`); ver `docs/` y `devops/scripts/` para publicarlos en Azure DevOps.
