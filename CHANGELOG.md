@@ -2,6 +2,10 @@
 
 Formato basado en *Keep a Changelog* y [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.0.0] - primera versión estable
+### Añadido
+- Documentación final (`docs/`), guion de demostración y checklist de entrega (AB#29, AB#30).
+
 ## [1.0.0-rc.1] - candidata a versión estable
 ### Añadido
 - Versionado SemVer, `CHANGELOG.md` y verificación de coherencia de versión en el pipeline (AB#30).
