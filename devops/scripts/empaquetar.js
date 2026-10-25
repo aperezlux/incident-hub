@@ -12,6 +12,7 @@ copiar('backend/src', 'backend/src');
 copiar('backend/package.json', 'backend/package.json');
 copiar('frontend/dist', 'frontend/dist');
 copiar('database', 'database');
+copiar('devops/scripts/desplegar.js', 'devops/desplegar.js');
 
 const version = require(path.join(raiz, 'backend/package.json')).version;
 fs.writeFileSync(path.join(destino, 'VERSION.json'), JSON.stringify({
