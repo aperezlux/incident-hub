@@ -30,6 +30,12 @@ function crearMemoria() {
     async listarComentarios(incidenteId) {
       return com.filter((c) => c.incidente_id === incidenteId).map((c) => ({ ...c }));
     },
+    async actualizar(id, campos) {
+      const i = inc.find((x) => x.id === id);
+      if (!i) return null;
+      Object.assign(i, campos, { actualizado_en: new Date().toISOString() });
+      return { ...i };
+    },
     // MAS_METODOS
   };
 }

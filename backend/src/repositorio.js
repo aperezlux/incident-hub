@@ -34,6 +34,18 @@ function crearRepo(pool) {
       const r = await pool.query('SELECT * FROM comentarios WHERE incidente_id = $1 ORDER BY creado_en ASC, id ASC', [incidenteId]);
       return r.rows;
     },
+    async actualizar(id, campos) {
+      const sets = [];
+      const v = [];
+      for (const k of ['estado', 'tecnico']) {
+        if (campos[k] !== undefined) { v.push(campos[k]); sets.push(`${k} = $${v.length}`); }
+      }
+      v.push(id);
+      const r = await pool.query(
+        `UPDATE incidentes SET ${sets.join(', ')}, actualizado_en = now() WHERE id = $${v.length} RETURNING *`, v
+      );
+      return r.rows[0] || null;
+    },
     // MAS_METODOS
   };
 }
