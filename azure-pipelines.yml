@@ -13,7 +13,9 @@ parameters:
     default: Default
 
 variables:
-  NODE_VERSION: '20.x'
+  - group: incident-hub-secrets   # variable group con DB_PASSWORD secreta (Pipelines > Library)
+  - name: NODE_VERSION
+    value: '20.x'
 
 stages:
   - stage: CI
@@ -31,6 +33,14 @@ stages:
             displayName: Instalar Node.js
             inputs:
               versionSpec: $(NODE_VERSION)
+
+          - script: node devops/scripts/buscar-secretos.js
+            displayName: Escaneo de secretos en el repositorio
+
+          - script: node -e "if(!process.env.DB_PASSWORD){console.error('DB_PASSWORD no configurada');process.exit(1)}console.log('DB_PASSWORD presente (valor oculto)')"
+            displayName: Verificar secretos protegidos
+            env:
+              DB_PASSWORD: $(DB_PASSWORD)
 
           - script: npm install --no-audit --no-fund
             workingDirectory: backend
