@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const { manejadorErrores } = require('./errores');
 
 function createApp(repo) {
   const app = express();
@@ -14,6 +15,7 @@ function createApp(repo) {
     .filter((f) => f.endsWith('.js'))
     .sort()
     .forEach((f) => require(path.join(dir, f))(app));
+  app.use(manejadorErrores);
   return app;
 }
 
