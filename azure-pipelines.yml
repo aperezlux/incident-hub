@@ -101,3 +101,55 @@ stages:
             inputs:
               PathtoPublish: $(Build.ArtifactStagingDirectory)/incident-hub
               ArtifactName: incident-hub
+
+  # ---------- RELEASE: Dev -> QA -> Producción (solo desde main) ----------
+  - stage: Dev
+    displayName: Despliegue a Dev
+    dependsOn: CI
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    pool:
+      name: ${{ parameters.agentPool }}
+    jobs:
+      - deployment: desplegar_dev
+        displayName: Desplegar y validar en Dev
+        environment: Dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: node $(Pipeline.Workspace)/incident-hub/devops/desplegar.js $(Pipeline.Workspace)/incident-hub dev
+                  displayName: Desplegar en Dev (con validación y rollback automático)
+
+  - stage: QA
+    displayName: Despliegue a QA (requiere aprobación)
+    dependsOn: Dev
+    condition: succeeded()
+    pool:
+      name: ${{ parameters.agentPool }}
+    jobs:
+      - deployment: desplegar_qa
+        displayName: Desplegar y validar en QA
+        environment: QA          # configurar Approvals and checks en este ambiente
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: node $(Pipeline.Workspace)/incident-hub/devops/desplegar.js $(Pipeline.Workspace)/incident-hub qa
+                  displayName: Desplegar en QA
+
+  - stage: Produccion
+    displayName: Despliegue a Producción (requiere aprobación)
+    dependsOn: QA
+    condition: succeeded()
+    pool:
+      name: ${{ parameters.agentPool }}
+    jobs:
+      - deployment: desplegar_prod
+        displayName: Desplegar y validar en Producción
+        environment: Produccion  # configurar Approvals and checks en este ambiente
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: node $(Pipeline.Workspace)/incident-hub/devops/desplegar.js $(Pipeline.Workspace)/incident-hub produccion
+                  displayName: Desplegar en Producción
