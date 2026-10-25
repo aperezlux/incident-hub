@@ -8,3 +8,5 @@ const SIGUIENTE = { ASIGNADO: ['EN_PROCESO'], EN_PROCESO: ['RESUELTO'], RESUELTO
 export function estadosSiguientes(estado) {
   return SIGUIENTE[estado] || [];
 }
+
+export const porcentaje = (valor, maximo) => (maximo ? Math.round((valor * 100) / maximo) : 0);
