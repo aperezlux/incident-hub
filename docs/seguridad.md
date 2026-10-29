@@ -17,3 +17,4 @@
 
 ## Riesgos conocidos
 Ver DT-03 (sin autenticación) y DT-04 (CORS abierto) en `docs/deuda-tecnica.md`.
+Prueba de espejo GitHub Actions preparada; no se publica desde Azure DevOps.
