@@ -9,5 +9,6 @@
 | DT-05 | Esquema SQL aplicado por scripts, sin herramienta de migraciones versionadas | Evolución del esquema | Media | Abierta | (futuro) |
 | DT-06 | Sin `package-lock.json` versionado: instalaciones no reproducibles | Reproducibilidad del build | Media | **Resuelta** (PR-20, AB#13) | AB#13 |
 | DT-07 | Despliegue de release simulado (copia de artefacto) en lugar de infraestructura real | Realismo del release | Baja | Abierta | (futuro) |
+| DT-08 | Task NodeTool@0 obsoleta en los pipelines; migrar a UseNode@1 | Bajo | Baja | Abierta | (futuro) |
 
 Las deudas DT-01 y DT-02 se resolvieron mediante ramas `refactor/*` trazables a su Work Item.
