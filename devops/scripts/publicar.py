@@ -3,7 +3,7 @@
 rama -> PR (con work items) -> aprobación -> merge -> cierre de work items -> tag.
 Uso: python3 devops/scripts/publicar.py <1|2|3>
 Variables: AZ_ORG, AZURE_DEVOPS_EXT_PAT (obligatorias), AZ_PROYECTO, AGENT_POOL (def. Default), INCIDENT_DB_PASSWORD (sem. 2)."""
-import getpass, json, os, sys, time
+import base64, getpass, json, os, subprocess, sys, time
 from azutil import *
 
 exigir()
@@ -16,11 +16,25 @@ url = info["remoteUrl"]
 backlog = {b["id"]: b for b in json.load(open("devops/backlog.json", encoding="utf-8"))}
 
 # main del repo parcial = estado al inicio de la semana (tag local base-sN)
-git_push(url, f"refs/tags/base-s{semana}^{{commit}}:refs/heads/main")
+auth = base64.b64encode((":" + PAT).encode()).decode()
+consulta_main = subprocess.run(
+    ["git", "-c", f"http.extraheader=Authorization: Basic {auth}",
+     "ls-remote", "--heads", url, "refs/heads/main"],
+    capture_output=True, text=True,
+)
+if consulta_main.returncode:
+    sys.exit(
+        "Falló: git ls-remote --heads <repositorio> refs/heads/main\n"
+        + redactar_salida(consulta_main.stderr)
+    )
+if consulta_main.stdout.strip():
+    print("  La rama main remota ya existe; se conserva sin sobrescribirla.")
+else:
+    git_push(url, f"refs/tags/base-s{semana}^{{commit}}:refs/heads/main")
 
 def estado(ids, nuevo):
     for i in ids:
-        az("boards", "work-item", "update", "--id", str(i), "--state", nuevo, check=False)
+        az("boards", "work-item", "update", "--id", str(i), "--state", nuevo)
 
 def esperar(run_id):
     for _ in range(80):
@@ -69,22 +83,42 @@ for p in prs:
         rid, res = correr(rama)
         print(f"  Evidencia: run #{rid} = {res}. Capture el log; luego se sube la corrección.")
     git_push(url, f"refs/heads/{rama}:refs/heads/{rama}")
-    desc = (f"{p['titulo']}\n\nWork items: " + ", ".join(f"AB#{w}" for w in p["wis"]) +
-            f"\n\nVer docs/pull-requests/PR-{n:02d}.md (descripción, validación y checklist).")
-    pr = az("repos", "pr", "create", "--repository", repo, "--source-branch", rama, "--target-branch", "main",
-            "--title", f"PR-{n:02d}: {p['titulo']}", "--description", desc, "--work-items", *[str(w) for w in p["wis"]])
+    desc = (f"{p['titulo']} | Work items: " + ", ".join(f"AB#{w}" for w in p["wis"]) +
+            f" | Ver docs/pull-requests/PR-{n:02d}.md (descripción, validación y checklist).")
+    try:
+        pr = az("repos", "pr", "create", "--repository", repo, "--source-branch", rama, "--target-branch", "main",
+                "--title", f"PR-{n:02d}: {p['titulo']}", "--description", desc, "--work-items", *[str(w) for w in p["wis"]])
+    except SystemExit as error:
+        if "TF401179" not in str(error):
+            raise
+        existentes = az("repos", "pr", "list", "--repository", repo, "--source-branch", rama,
+                        "--target-branch", "main", "--status", "active")
+        pr = next((item for item in existentes or [] if item.get("pullRequestId")), None)
+        if pr is None:
+            raise error
+        print(f"  PR activo existente #{pr['pullRequestId']}; se continuará con su aprobación y merge.")
     estado(p["wis"], "Active")
     if p.get("roto_primero"):
         print("  Ejecutando pipeline con la corrección (se espera ÉXITO) ...")
         correr(rama)
     az("repos", "pr", "set-vote", "--id", str(pr["pullRequestId"]), "--vote", "approve", check=False)
-    az("repos", "pr", "update", "--id", str(pr["pullRequestId"]), "--status", "completed", "--merge-strategy", "noFastForward",
-       "--delete-source-branch", "false", "--merge-commit-message", f"Merged PR-{n:02d}: {p['titulo']} AB#{p['wis'][0]}")
+    comando = [
+        "az.cmd" if os.name == "nt" else "az",
+        "repos", "pr", "update", "--id", str(pr["pullRequestId"]),
+        "--status", "completed", "--delete-source-branch", "false",
+        "--merge-commit-message", f"Merged PR-{n:02d}: {p['titulo']} AB#{p['wis'][0]}",
+        "--org", ORG, "-o", "json",
+    ]
+    resultado = subprocess.run(comando, capture_output=True, text=True)
+    if resultado.returncode:
+        sys.exit(f"Falló: {' '.join(comando)}\n{redactar_salida(resultado.stderr)}")
+    if resultado.stdout.strip():
+        json.loads(resultado.stdout)
     estado(p["cerrar"], "Closed")
     if p.get("crear_pipeline"):
         crear_pipeline()
     if p["tag"]:
-        git("fetch", url, "main"); 
+        git("-c", f"http.extraheader=Authorization: Basic {auth}", "fetch", url, "main")
         git("tag", "-f", "-a", p["tag"], "-m", f"Release {p['tag']}", "FETCH_HEAD")
         git_push(url, f"refs/tags/{p['tag']}")
         print(f"  tag {p['tag']} publicado")

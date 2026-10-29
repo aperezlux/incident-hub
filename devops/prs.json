@@ -102,7 +102,20 @@
   "tag": "v0.1.0"
  },
  {
-  "num": 8,
+  "num": 20,
+  "rama": "chore/frontend-lint-s2",
+  "titulo": "Corregir lint del frontend y versionar package-lock.json",
+  "wis": [
+   12,
+   13
+  ],
+  "semana": 2,
+  "autor": "d2",
+  "cerrar": [],
+  "tag": null
+ },
+ {
+ "num": 8,
   "rama": "chore/pipeline-azure-ci",
   "titulo": "Pipeline de Azure: build, pruebas, seguridad y artefacto",
   "wis": [

@@ -9,6 +9,7 @@
 | PR-05 | `feature/api-dashboard` | AB#23 | Dev Uno | 1 | - |
 | PR-06 | `feature/frontend-incidentes` | AB#17, AB#19 | Dev Dos | 1 | - |
 | PR-07 | `feature/frontend-detalle-bitacora` | AB#22 | Dev Tres | 1 | v0.1.0 |
+| PR-20 | `chore/frontend-lint-s2` | AB#12, AB#13 | Dev Dos | 2 | - |
 | PR-08 | `chore/pipeline-azure-ci` | AB#24 | Dev Tres | 2 | - |
 | PR-09 | `docs/agente-autohospedado` | AB#25 | Dev Tres | 2 | - |
 | PR-10 | `chore/github-actions-ci` | AB#26 | Dev Dos | 2 | - |
@@ -21,3 +22,4 @@
 | PR-17 | `chore/release-ambientes` | AB#29 | Dev Tres | 3 | v0.9.0 |
 | PR-18 | `chore/versionado-semver` | AB#30 | Dev Uno | 3 | v1.0.0-rc.1 |
 | PR-19 | `docs/documentacion-final` | AB#29, AB#30 | Dev Uno | 3 | v1.0.0 |
+| PR-21 | `fix/estado-cerrado-regresion` | AB#33 | Dev Dos | 2 | - |
