@@ -42,6 +42,9 @@ stages:
             env:
               DB_PASSWORD: $(DB_PASSWORD)
 
+          - script: node devops/scripts/verificar-version.js
+            displayName: Verificar versionado SemVer y CHANGELOG
+
           - script: npm install --no-audit --no-fund
             workingDirectory: backend
             displayName: Instalar dependencias (backend)
